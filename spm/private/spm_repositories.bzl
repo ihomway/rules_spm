@@ -168,6 +168,22 @@ def _create_spm_module_decls(
                 )
             else:
                 fail("Unrecognized system target type. %s" % (target))
+        elif pds.is_binary_target(target):
+            if pds.is_binary_product(target):
+                build_decl = build_declarations.merge(
+                    build_decl,
+                    spm_build_declarations.spm_system_library(
+                        repository_ctx,
+                        pkg_name,
+                        target,
+                        target_deps,
+                    ),
+                )
+            else:
+                fail("Unrecognized binary target type. %s" % (target))
+
+        # {"c99name": "_InternalSwiftSyntaxParser", "module_type": "BinaryTarget", "name": "_InternalSwiftSyntaxParser", "path": "remote/archive/_InternalSwiftSyntaxParser.xcframework.zip", "product_memberships": ["SwiftSyntaxParser", "lit-test-helper"], "sources": [], "type": "binary", "dependencies": []}
+
         else:
             fail("Unrecognized target type. %s" % (target))
 
@@ -601,7 +617,7 @@ spm_repositories = repository_rule(
             doc = """\
 Specifies how `rules_spm` will build the Swift packages.
 
-  `spm`: Build the packages with Swift Package Manager and generate Bazel targets 
+  `spm`: Build the packages with Swift Package Manager and generate Bazel targets
          that import the results.
   `bazel`: Generate Bazel targets that build the packages.
 """,
